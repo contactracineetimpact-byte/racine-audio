@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Mental Nocturne — Racine & Impact</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --noir: #080808;
+      --vert: #2D5016;
+      --vert-clair: #3a6b1e;
+      --or: #C9A84C;
+      --or-clair: #e0c06a;
+      --blanc: #F5F0E8;
+      --gris: #888;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--noir);
+      color: var(--blanc);
+      font-family: 'Barlow', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* Ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(45,80,22,0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      gap: 0;
+    }
+
+    /* Logo */
+    .logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 32px;
+      animation: fadeDown 1s ease both;
+    }
+
+    /* Eyebrow */
+    .eyebrow {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--or);
+      margin-bottom: 16px;
+      animation: fadeDown 1s 0.15s ease both;
+    }
+
+    /* Titre */
+    .titre {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 7vw, 52px);
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.15;
+      color: var(--blanc);
+      margin-bottom: 8px;
+      animation: fadeDown 1s 0.25s ease both;
+    }
+
+    .titre em {
+      font-style: italic;
+      color: var(--or);
+    }
+
+    /* Sous-titre */
+    .sous-titre {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(15px, 3vw, 18px);
+      color: var(--gris);
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown 1s 0.35s ease both;
+    }
+
+    /* Player card */
+    .player-card {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(145deg, rgba(45,80,22,0.15), rgba(201,168,76,0.05));
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      animation: fadeUp 1s 0.45s ease both;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Waveform décorative */
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 40px;
+    }
+
+    .waveform .bar {
+      width: 3px;
+      background: var(--or);
+      border-radius: 2px;
+      opacity: 0.4;
+      transition: height 0.1s ease, opacity 0.3s ease;
+    }
+
+    .waveform.playing .bar {
+      opacity: 1;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    .waveform .bar:nth-child(1)  { height: 12px; animation-delay: 0s; }
+    .waveform .bar:nth-child(2)  { height: 22px; animation-delay: 0.1s; }
+    .waveform .bar:nth-child(3)  { height: 30px; animation-delay: 0.2s; }
+    .waveform .bar:nth-child(4)  { height: 18px; animation-delay: 0.3s; }
+    .waveform .bar:nth-child(5)  { height: 36px; animation-delay: 0.15s; }
+    .waveform .bar:nth-child(6)  { height: 26px; animation-delay: 0.25s; }
+    .waveform .bar:nth-child(7)  { height: 14px; animation-delay: 0.05s; }
+    .waveform .bar:nth-child(8)  { height: 32px; animation-delay: 0.35s; }
+    .waveform .bar:nth-child(9)  { height: 20px; animation-delay: 0.1s; }
+    .waveform .bar:nth-child(10) { height: 10px; animation-delay: 0.2s; }
+    .waveform .bar:nth-child(11) { height: 28px; animation-delay: 0.3s; }
+    .waveform .bar:nth-child(12) { height: 16px; animation-delay: 0.0s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.4); }
+      50%       { transform: scaleY(1); }
+    }
+
+    /* Durée */
+    .duration-info {
+      font-size: 12px;
+      color: var(--gris);
+      letter-spacing: 0.1em;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--vert-clair), var(--or));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s linear;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--gris);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Bouton play */
+    .play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--vert), var(--vert-clair));
+      border: 2px solid rgba(201,168,76,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 0 30px rgba(45,80,22,0.4);
+      flex-shrink: 0;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 50px rgba(45,80,22,0.6), 0 0 20px rgba(201,168,76,0.2);
+      border-color: rgba(201,168,76,0.7);
+    }
+
+    .play-btn:active { transform: scale(0.96); }
+
+    .play-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--blanc);
+      margin-left: 4px;
+      transition: opacity 0.2s;
+    }
+
+    .play-btn.playing svg.icon-play { display: none; }
+    .play-btn:not(.playing) svg.icon-pause { display: none; }
+
+    /* Instructions */
+    .instructions {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gris);
+      line-height: 1.7;
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+    }
+
+    /* Séparateur */
+    .sep {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--or), transparent);
+      margin: 40px 0 32px;
+      animation: fadeUp 1s 0.6s ease both;
+    }
+
+    /* CTA */
+    .cta-bloc {
+      text-align: center;
+      animation: fadeUp 1s 0.7s ease both;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .cta-texte {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--blanc);
+      line-height: 1.5;
+    }
+
+    .cta-texte span {
+      color: var(--or);
+      font-style: italic;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid var(--or);
+      color: var(--or);
+      font-family: 'Barlow', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 40px;
+      transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .cta-btn:hover {
+      background: var(--or);
+      color: var(--noir);
+      box-shadow: 0 0 30px rgba(201,168,76,0.3);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+      text-align: center;
+      animation: fadeUp 1s 0.8s ease both;
+    }
+
+    /* Animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Audio element caché */
+    audio { display: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <img src="logo.png" alt="Racine & Impact" class="logo" id="logo" onerror="this.style.display='none'" />
+
+  <p class="eyebrow">Racine &amp; Impact</p>
+
+  <h1 class="titre">Reset Mental<br><em>Nocturne</em></h1>
+  <p class="sous-titre">3 minutes pour reprendre le contrôle<br>avant que la semaine commence</p>
+
+  <div class="player-card">
+
+    <div class="waveform" id="waveform">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+
+    <button class="play-btn" id="playBtn" aria-label="Lire l'audio">
+      <svg class="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="time-row">
+        <span id="currentTime">0:00</span>
+        <span id="totalTime">2:51</span>
+      </div>
+    </div>
+
+    <p class="instructions">
+      Pose une main sur ta poitrine.<br>
+      Ferme les yeux. Laisse-toi guider.
+    </p>
+
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="cta-bloc">
+    <p class="cta-texte">
+      Tu veux aller plus loin ?<br>
+      <span>Identifie ce qui te bloque vraiment — en 2h.</span>
+    </p>
+    <a href="https://calendly.com/contact-racineetimpact/appel-decouverte--15min-offert" 
+       class="cta-btn" target="_blank">
+      Réserver mon appel offert — 15 min
+    </a>
+  </div>
+
+  <p class="footer">© Racine &amp; Impact — Confidentiel — Tous droits réservés</p>
+
+</div>
+
+<!-- Audio : remplace SRC par ton lien hébergé -->
+<audio id="audio" preload="metadata">
+  <source src="audio.m4a" type="audio/mp4">
+</audio>
+
+<script>
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('playBtn');
+  const waveform = document.getElementById('waveform');
+  const progressFill = document.getElementById('progressFill');
+  const progressBar = document.getElementById('progressBar');
+  const currentTimeEl = document.getElementById('currentTime');
+  const totalTimeEl = document.getElementById('totalTime');
+
+  function fmt(s) {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  }
+
+  playBtn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      playBtn.classList.add('playing');
+      waveform.classList.add('playing');
+    } else {
+      audio.pause();
+      playBtn.classList.remove('playing');
+      waveform.classList.remove('playing');
+    }
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = pct + '%';
+      currentTimeEl.textContent = fmt(audio.currentTime);
+    }
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    totalTimeEl.textContent = fmt(audio.duration);
+  });
+
+  audio.addEventListener('ended', () => {
+    playBtn.classList.remove('playing');
+    waveform.classList.remove('playing');
+    progressFill.style.width = '0%';
+    currentTimeEl.textContent = '0:00';
+    audio.currentTime = 0;
+  });
+
+  progressBar.addEventListener('click', (e) => {
+    const rect = progressBar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * audio.duration;
+  });
+</script>
+</body>
+</html>
