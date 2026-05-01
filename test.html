@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Test Pression — Racine & Impact</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --noir:#080808;--vert:#2D5016;--vert2:#1a3a0a;--vert3:#3a6b1e;
+  --or:#C9A84C;--blanc:#F5F0E8;--gris:#888;--gris2:#1a1a1a;
+}
+html,body{min-height:100%;background:var(--noir);color:var(--blanc);font-family:'Barlow',sans-serif;font-weight:300;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+.glow{position:fixed;top:-150px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(45,80,22,.18) 0%,transparent 70%);pointer-events:none;z-index:0;transition:background 1s ease}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;position:relative;z-index:1;text-align:center}
+.screen.active{display:flex}
+
+/* INTRO */
+.logo-wrap{margin-bottom:28px;opacity:0;animation:fadeDown .7s .1s ease forwards}
+.logo-wrap img{width:52px;height:52px;object-fit:contain}
+.intro-hook{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,8vw,44px);font-weight:300;line-height:1.2;margin-bottom:20px;opacity:0;animation:fadeDown .7s .2s ease forwards}
+.intro-hook em{font-style:italic;color:var(--or)}
+.intro-hook strong{font-weight:700;display:block;margin-top:4px}
+.intro-reality{font-size:15px;color:rgba(245,240,232,.6);line-height:1.8;max-width:320px;margin:0 auto 12px;opacity:0;animation:fadeDown .7s .3s ease forwards}
+.intro-reality strong{color:var(--blanc);font-weight:500}
+.intro-warning{font-size:12px;color:var(--or);letter-spacing:.05em;margin-bottom:36px;opacity:0;animation:fadeDown .7s .35s ease forwards}
+.intro-stats{display:flex;gap:32px;justify-content:center;margin-bottom:40px;opacity:0;animation:fadeDown .7s .4s ease forwards}
+.stat{text-align:center}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--or);display:block;line-height:1}
+.stat-l{font-size:10px;color:var(--gris);letter-spacing:.05em;margin-top:4px;display:block}
+.btn-go{padding:18px 52px;background:linear-gradient(135deg,var(--vert),var(--vert3));border:1px solid rgba(201,168,76,.3);color:var(--blanc);font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;border-radius:50px;cursor:pointer;box-shadow:0 0 50px rgba(45,80,22,.35);transition:all .3s;opacity:0;animation:fadeDown .7s .5s ease forwards}
+.btn-go:hover{transform:translateY(-3px);box-shadow:0 8px 60px rgba(45,80,22,.55)}
+.intro-before-btn{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:rgba(245,240,232,.75);margin-bottom:16px;line-height:1.5;opacity:0;animation:fadeDown .7s .48s ease forwards}
+.intro-social-proof{font-size:11px;color:var(--or);margin-top:10px;letter-spacing:.03em;opacity:0;animation:fadeDown .7s .55s ease forwards}
+.intro-anon{font-size:11px;color:var(--gris);margin-top:8px;opacity:0;animation:fadeDown .7s .6s ease forwards}
+
+/* QUESTION */
+.progress-wrap{width:100%;max-width:380px;margin-bottom:40px}
+.prog-bg{width:100%;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--vert3),var(--or));transition:width .5s ease}
+.prog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--gris);margin-top:8px}
+.q-step{font-size:10px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--or);margin-bottom:12px}
+.q-cat{font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--vert3);margin-bottom:14px}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,6vw,30px);font-weight:300;line-height:1.35;max-width:340px;margin:0 auto 36px}
+.q-text em{font-style:italic;color:var(--or)}
+.slider-wrap{width:100%;max-width:360px;margin:0 auto}
+.score-display{font-family:'Cormorant Garamond',serif;font-size:80px;font-weight:300;line-height:1;margin-bottom:6px;transition:color .2s}
+.score-hint{font-size:11px;color:var(--gris);margin-bottom:20px;min-height:32px;transition:all .3s;line-height:1.5;padding:0 8px}
+.slider-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--gris);margin-bottom:12px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:rgba(255,255,255,.1);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--or);border:3px solid var(--noir);box-shadow:0 0 16px rgba(201,168,76,.5);transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--or);border:3px solid var(--noir);cursor:pointer}
+.btn-next{margin-top:40px;padding:14px 44px;background:var(--gris2);border:1px solid rgba(255,255,255,.1);color:var(--blanc);font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;border-radius:50px;cursor:pointer;transition:all .3s}
+.btn-next.ready{background:linear-gradient(135deg,var(--vert),var(--vert3));border-color:rgba(201,168,76,.3);box-shadow:0 4px 30px rgba(45,80,22,.4)}
+
+/* RÉSULTAT */
+#resultat{justify-content:flex-start;padding-top:60px}
+.res-eyebrow{font-size:10px;font-weight:600;letter-spacing:.4em;text-transform:uppercase;color:var(--or);margin-bottom:20px}
+.res-score-wrap{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin-bottom:16px}
+.res-score{font-family:'Cormorant Garamond',serif;font-size:88px;font-weight:300;line-height:1;transition:color .5s}
+.res-score-den{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gris);padding-bottom:14px}
+.res-titre{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,5vw,28px);font-weight:400;line-height:1.25;margin-bottom:12px}
+.res-titre em{font-style:italic;color:var(--or)}
+.res-desc{font-size:14px;color:rgba(245,240,232,.6);line-height:1.8;max-width:340px;margin:0 auto 32px}
+.barres{width:100%;max-width:380px;margin:0 auto 32px;display:flex;flex-direction:column;gap:10px}
+.barre-row{display:flex;align-items:center;gap:10px}
+.barre-label{font-size:11px;color:var(--gris);width:106px;text-align:right;flex-shrink:0;line-height:1.3}
+.barre-bg{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.barre-fill{height:100%;border-radius:2px;width:0%;transition:width 1.2s ease}
+.barre-val{font-size:11px;font-weight:600;width:18px;text-align:right;flex-shrink:0}
+.projection{width:100%;max-width:360px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:12px;padding:24px 20px;margin:0 auto 28px}
+.projection-q{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--or);margin-bottom:12px;line-height:1.4}
+.projection-r{font-size:14px;color:rgba(245,240,232,.75);line-height:1.7}
+.msg-franck{width:100%;max-width:360px;background:var(--gris2);border-left:3px solid var(--vert);border-radius:0 10px 10px 0;padding:20px;margin:0 auto 28px;text-align:left}
+.msg-who{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--vert3);margin-bottom:10px}
+.msg-text{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;line-height:1.7;color:rgba(245,240,232,.85)}
+.msg-text strong{font-style:normal;color:var(--or);font-weight:600}
+.cta-stack{width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;gap:12px;margin:0 auto 40px}
+.btn-main{display:block;width:100%;padding:20px 24px;background:linear-gradient(135deg,var(--vert),var(--vert3));border:1px solid rgba(201,168,76,.3);color:var(--blanc);font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;border-radius:14px;box-shadow:0 0 50px rgba(45,80,22,.35);transition:all .3s}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 8px 60px rgba(45,80,22,.55)}
+.btn-main-note{font-size:11px;color:rgba(245,240,232,.45);margin-top:-4px}
+.btn-insta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 24px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-decoration:none;border-radius:14px;transition:all .3s}
+.btn-insta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(253,29,29,.3)}
+.btn-retry{font-size:12px;color:var(--gris);background:none;border:none;cursor:pointer;font-family:'Barlow',sans-serif;text-decoration:underline;text-underline-offset:4px;padding:8px}
+.fade-in{opacity:0;animation:fadeUp .6s ease forwards}
+.d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}.d6{animation-delay:.9s}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+
+<div class="screen active" id="intro">
+  <div class="logo-wrap">
+    <img src="https://drive.google.com/uc?export=view&id=1ssnxCXt62Qe6L2xvO7h2WTOB_qgatMw9" alt="Racine & Impact" onerror="this.style.display='none'">
+  </div>
+  <h1 class="intro-hook">Tu tiens.<br><em>Mais à quel prix ?</em></h1>
+  <p class="intro-reality">Tu fais tout bien. Tu assures. Tu avances.<br>Mais le dimanche soir, <strong>quelque chose se serre.</strong><br>Et tu ne sais pas vraiment pourquoi.</p>
+  <p class="intro-warning">Ce test dit ce que tu n'oses pas te dire…<br>avant que ton corps ou ta vie ne te l'impose.</p>
+  <div class="intro-stats">
+    <div class="stat"><span class="stat-n">8</span><span class="stat-l">questions</span></div>
+    <div class="stat"><span class="stat-n">3</span><span class="stat-l">minutes</span></div>
+    <div class="stat"><span class="stat-n">1</span><span class="stat-l">vérité</span></div>
+  </div>
+  <p class="intro-before-btn">3 minutes peuvent changer ta façon de voir ta situation.</p>
+  <button class="btn-go" onclick="startTest()">Je découvre ce qui m'épuise</button>
+  <p class="intro-social-proof">✓ Déjà fait par des personnes qui pensaient aller bien…</p>
+  <p class="intro-anon">Anonyme · Gratuit · Sans inscription</p>
+</div>
+
+<div class="screen" id="question">
+  <div class="progress-wrap">
+    <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="prog-labels"><span id="progTxt">Question 1 sur 8</span><span id="progPct">0%</span></div>
+  </div>
+  <p class="q-step" id="qStep">01 / 08</p>
+  <p class="q-cat" id="qCat">ÉNERGIE</p>
+  <h2 class="q-text" id="qText">...</h2>
+  <div class="slider-wrap">
+    <div class="score-display" id="scoreDisplay">5</div>
+    <div class="score-hint" id="scoreHint"></div>
+    <div class="slider-ends"><span id="sLow">Pas du tout</span><span id="sHigh">Totalement</span></div>
+    <input type="range" id="slider" min="0" max="10" value="5" oninput="onSlider(this.value)">
+  </div>
+  <button class="btn-next ready" onclick="nextQ()">Suivant →</button>
+</div>
+
+<div class="screen" id="resultat">
+  <p class="res-eyebrow fade-in">Ton résultat</p>
+  <div class="res-score-wrap fade-in d1"><span class="res-score" id="resScore">0</span><span class="res-score-den">/ 80</span></div>
+  <h2 class="res-titre fade-in d2" id="resTitre"></h2>
+  <p class="res-desc fade-in d3" id="resDesc"></p>
+  <div class="barres fade-in d3" id="barres"></div>
+  <div class="projection fade-in d4">
+    <p class="projection-q">"Si rien ne change…<br>tu te vois comment dans 6 mois ?"</p>
+    <p class="projection-r" id="projText"></p>
+  </div>
+  <div class="msg-franck fade-in d5">
+    <p class="msg-who">Franck — Racine & Impact</p>
+    <p class="msg-text" id="msgFranck"></p>
+  </div>
+  <div class="cta-stack fade-in d6">
+    <a id="btnCalendly" href="https://calendly.com/contact-racineetimpact/appel-decouverte--15min-offert" class="btn-main" target="_blank">Parler à Franck — Appel offert 15 min</a>
+    <p id="noteCalendly" class="btn-main-note">Sans engagement · Tu raccroches si ça ne te correspond pas</p>
+    <a href="https://www.instagram.com/franck.racineetimpact" class="btn-insta" target="_blank">📸 Suivre @franck.racineetimpact</a>
+    <button class="btn-retry" onclick="restart()">Refaire le test</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {cat:"ÉNERGIE",text:'Le matin au réveil —<br>t\'as <em>envie de te lever</em> ?',low:"Pas du tout",high:"Complètement",key:"energie",inverse:true,
+   hints:["Tu traînes. Le lit est le seul endroit où tu te sens en paix.","Tu te lèves mais sans élan. Le corps suit, la tête non.","Rarement avec entrain. Tu traînes souvent.","Certains matins difficiles.","Ça dépend. Parfois tu forçes un peu.","Plutôt bien. Sauf avant certains jours.","Tu te lèves. Quelques matins difficiles.","Souvent prêt.","Tu te lèves facilement la plupart du temps.","Presque toujours prêt.","Tu bondis. Tu aimes tes matins."]},
+  {cat:"FATIGUE MENTALE",text:'Dans la journée —<br>ton cerveau <em>sature</em> ?',low:"Jamais",high:"En permanence",key:"fatigue",inverse:false,
+   hints:["Jamais saturé. Tu es en pleine forme mentalement.","Très rarement saturé.","Rarement. Tu restes efficace.","Quelques moments de saturation mais tu récupères.","Un peu. Surtout en fin de semaine.","Parfois. Certaines journées sont lourdes.","Régulièrement. Tu tournes au ralenti l'après-midi.","Souvent. Tu fonctionnes en mode survie.","Très souvent saturé. Tu n'es plus vraiment là.","Presque en permanence. Tu relis sans comprendre.","En permanence. Ton cerveau est épuisé."]},
+  {cat:"MOTIVATION",text:'Le lundi matin —<br>tu <em>veux vraiment</em> y aller ?',low:"Jamais",high:"Toujours",key:"motivation",inverse:true,
+   hints:["Tu détestes le lundi. C'est une épreuve avant même de commencer.","Tu redoutes presque chaque lundi.","Souvent tu n'as pas envie. Tu y vas sans choix.","Certains lundis vraiment difficiles.","Tu y vas. Mais sans enthousiasme.","Neutre. Ni envie ni résistance vraiment.","Généralement ok. Quelques lundis difficiles.","Souvent motivé. Quelques exceptions.","La plupart du temps tu y vas avec envie.","Presque toujours partant.","Tu aimes ton travail. Le lundi ne te fait pas peur."]},
+  {cat:"PRESSION INTÉRIEURE",text:'Cette pression que tu portes —<br><em>elle lâche parfois</em> ?',low:"Jamais",high:"Tout le temps",key:"pression",inverse:false,
+   hints:["Quelle pression ? Tu es serein.","Rarement sous tension.","Tu gères bien en général.","Assez souvent tu relâches.","Tu décompresses parfois. Mais pas assez.","Un peu. Tu sens que ça pèse en fond.","Elle revient souvent. Même les bons jours.","Rarement. Quelques moments de répit mais elle revient.","Presque jamais. C'est une tension que tu ne sais plus nommer.","Elle ne lâche presque jamais. Même dans ton sommeil.","Elle ne lâche jamais. Tu portes tout en permanence."]},
+  {cat:"PLAISIR",text:'Tu <em>savoures</em> encore<br>tes journées ?',low:"Plus du tout",high:"Complètement",key:"plaisir",inverse:true,
+   hints:["Le plaisir a disparu. Tu fais. Tu accomplis. Mais tu ne ressens plus rien.","Très peu. Même les succès glissent sans laisser de trace.","Rarement. Quelques instants fugaces.","Parfois. Mais moins qu'avant.","Un peu. Certains moments restent.","Quelques satisfactions. Le plaisir profond est rare.","Assez souvent. Quelques zones d'ombre.","Souvent. Quelques journées vides.","La plupart du temps tu apprécies.","Presque toujours.","Pleinement. Tu vis tes journées avec intensité."]},
+  {cat:"DÉCONNEXION",text:'Le soir ou le week-end —<br><em>tu décroches vraiment</em> ?',low:"Impossible",high:"Complètement",key:"deconnexion",inverse:true,
+   hints:["Tu ne décroches jamais. Le boulot est dans ta tête même quand tu dors.","Presque impossible. Ton téléphone ne s'éteint jamais vraiment.","Très difficile. Tu es là physiquement mais pas présent.","Tu essaies. Mais tu vérifies quand même.","Parfois tu décroches. Rarement complètement.","Un peu. Le week-end aide mais pas toujours.","Tu décroches assez souvent. Quelques intrusions.","Souvent tu lâches prise. Quelques soirs difficiles.","Tu décroches bien. Quelques exceptions.","Presque toujours tu déconnectes bien.","Tu décroches complètement. Le boulot reste au boulot."]},
+  {cat:"SENS",text:'Ce que tu fais chaque jour —<br>ça a encore <em>du sens pour toi</em> ?',low:"Plus du tout",high:"Complètement",key:"sens",inverse:true,
+   hints:["Plus du tout. Tu exécutes. Mais pour quoi ? Tu ne sais plus.","Très peu. Tu te demandes parfois où tu vas.","Rarement. Les questions de fond reviennent souvent.","Parfois tu doutes. Et ça pèse lourd.","Un sens flou. Tu fais ce qu'il faut sans conviction profonde.","Un peu. Par moments tu retrouves pourquoi.","Assez souvent tu trouves du sens.","Souvent. Quelques zones de doute.","La plupart du temps tu sais pourquoi.","Presque toujours aligné.","Pleinement. Ce que tu fais a du sens et tu le sais."]},
+  {cat:"SIGNAUX DU CORPS",text:'Ton corps <em>t\'envoie des signaux</em> —<br>tensions, sommeil, douleurs ?',low:"Aucun signal",high:"Signaux intenses",key:"corps",inverse:false,
+   hints:["Aucun signal. Ton corps est au repos.","Très peu de signaux.","Ton corps est en forme. Quelques petits signes.","Presque jamais. Quelques moments.","Rarement. De temps en temps un signe.","Un peu. Quelques tensions mais tu gères.","Parfois. Des signaux dans les moments de pression.","Régulièrement. Quelques douleurs, un sommeil fragile.","Souvent. Ton corps encaisse ce que ta tête refuse d'admettre.","Beaucoup. Dos, sommeil, fatigue chronique.","Ton corps crie. Il t'envoie des signaux depuis longtemps."]}
+];
+
+let current=0,scores={};
+
+function startTest(){showScreen('question');renderQ(0)}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderQ(idx){
+  const q=questions[idx];
+  const pct=Math.round((idx/8)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progTxt').textContent=`Question ${idx+1} sur 8`;
+  document.getElementById('progPct').textContent=pct+'%';
+  document.getElementById('qStep').textContent=String(idx+1).padStart(2,'0')+' / 08';
+  document.getElementById('qCat').textContent=q.cat;
+  document.getElementById('qText').innerHTML=q.text;
+  document.getElementById('sLow').textContent=q.low;
+  document.getElementById('sHigh').textContent=q.high;
+  const s=document.getElementById('slider');
+  s.value=5;onSlider(5);
+  const scr=document.getElementById('question');
+  scr.style.opacity=0;
+  setTimeout(()=>{scr.style.transition='opacity .35s';scr.style.opacity=1;},30);
+}
+
+function onSlider(val){
+  val=parseInt(val);
+  const q=questions[current];
+  const sd=document.getElementById('scoreDisplay');
+  const sh=document.getElementById('scoreHint');
+  sd.textContent=val;
+  let col;
+  if(q.inverse){col=val<=3?'#e74c3c':val<=6?'#e67e22':'#27ae60';}
+  else{col=val>=7?'#e74c3c':val>=4?'#e67e22':'#27ae60';}
+  sd.style.color=col;
+  sh.textContent=q.hints?q.hints[val]:'';
+  sh.style.color=col;
+  const glow=document.getElementById('glow');
+  if(col==='#e74c3c') glow.style.background='radial-gradient(ellipse,rgba(231,76,60,.15) 0%,transparent 70%)';
+  else if(col==='#e67e22') glow.style.background='radial-gradient(ellipse,rgba(230,126,34,.12) 0%,transparent 70%)';
+  else glow.style.background='radial-gradient(ellipse,rgba(45,80,22,.2) 0%,transparent 70%)';
+}
+
+function nextQ(){
+  const val=parseInt(document.getElementById('slider').value);
+  scores[questions[current].key]=val;
+  current++;
+  if(current<questions.length){renderQ(current);}else{showResults();}
+}
+
+function showResults(){
+  let total=0;
+  questions.forEach(q=>{const v=scores[q.key];total+=q.inverse?v:(10-v);});
+  const pct=Math.round((total/80)*100);
+  let titre,desc,projText,msgFranck,scoreColor;
+
+  let hideCalendly=false;
+  if(pct>=94){
+    titre='<em>Équilibre solide.</em> Et c\'est rare.';
+    desc='Ton score est bon. Vraiment. Tu es parmi les rares personnes qui maintiennent un équilibre réel entre pression et ressources intérieures. Prends-en conscience — et garde cet équilibre.';
+    projText='Dans 6 mois — si tu continues comme ça — tu seras probablement encore solide. Mais l\'équilibre se travaille. Ce qui est construit peut se fragiliser sans qu\'on s\'en rende compte. Reste attentif aux premiers signaux.';
+    msgFranck='Tu n\'as pas besoin de moi aujourd\'hui. <strong>Et c\'est une bonne nouvelle.</strong> Suis-moi sur Instagram — je partage des outils concrets pour maintenir cet équilibre dans la durée.';
+    scoreColor='#27ae60';
+    hideCalendly=true;
+  } else if(pct>=69){
+    titre='Pression silencieuse. <em>Tu tiens — mais attention.</em>';
+    desc='Tu fonctionnes. Tu assures. Mais quelque chose se serre en silence. Ce type de pression est le plus dangereux — il ne crie pas. Il s\'installe discrètement jusqu\'au jour où il devient impossible à ignorer.';
+    projText='Dans 6 mois — si rien ne change — cette pression sera plus présente. Pas de rupture dramatique peut-être. Mais une fatigue plus profonde. Un plaisir encore plus rare. Et une distance qui grandit avec ce que tu veux vraiment.';
+    msgFranck='Ce que tu vis n\'est <strong>pas anodin</strong>. La pression silencieuse est souvent celle qu\'on détecte trop tard. Un appel de 15 minutes pour voir si je peux t\'aider à identifier ce qui se joue — sans engagement.';
+    scoreColor='#a8c44a';
+    hideCalendly=false;
+  } else if(pct>=44){
+    titre='Désalignement profond. <em>La pression est bien installée.</em>';
+    desc='Tu fonctionnes encore — mais ton système intérieur paie le prix. Tu le sais. Cette sensation que tu portes trop, que le plaisir s\'est évaporé, que quelque chose cloche — ce n\'est pas dans ta tête. C\'est réel.';
+    projText='Dans 6 mois — si rien ne change — tu seras plus épuisé. Les signaux que tu ignores aujourd\'hui seront plus forts. Et la distance avec ce que tu veux vraiment sera plus difficile à combler. Ce n\'est pas une fatalité — mais ça demande d\'agir maintenant.';
+    msgFranck='Ce que tu portes là — <strong>c\'est réel. Et ça a une source précise.</strong> Ce n\'est pas de la faiblesse — c\'est un système intérieur sous pression qui tourne en boucle. En 2h ensemble, on peut l\'identifier et commencer à le corriger.';
+    scoreColor='#e67e22';
+    hideCalendly=false;
+  } else {
+    titre='Zone critique. <em>Ton corps te parle depuis trop longtemps.</em>';
+    desc='Ce que tu vis dépasse la simple fatigue. Les signaux sont là depuis un moment. Tu continues parce que tu n\'as pas le choix. Mais à quel prix ? Ce n\'est pas normal. Et ça a une cause précise.';
+    projText='Dans 6 mois — si rien ne change — tu seras épuisé. Vraiment épuisé. Pas juste fatigué. Cette pression que tu portes seul finit toujours par trouver une sortie — souvent au pire moment, de la pire façon. Tu mérites mieux que ça.';
+    msgFranck='Je t\'ai vu dans ces réponses. <strong>Tu portes ça seul depuis trop longtemps.</strong> Ce n\'est pas normal et ce n\'est pas une fatalité. Appelle-moi — pas pour acheter quelque chose — pour qu\'on regarde ensemble ce qui se passe vraiment. C\'est urgent.';
+    scoreColor='#e74c3c';
+    hideCalendly=false;
+  }
+
+  document.getElementById('resTitre').innerHTML=titre;
+  document.getElementById('resDesc').textContent=desc;
+  document.getElementById('projText').textContent=projText;
+  document.getElementById('msgFranck').innerHTML=msgFranck;
+  const scoreEl=document.getElementById('resScore');
+  scoreEl.style.color=scoreColor;
+  const calendlyBtn=document.getElementById('btnCalendly');
+  const calendlyNote=document.getElementById('noteCalendly');
+  if(calendlyBtn) calendlyBtn.style.display=hideCalendly?'none':'block';
+  if(calendlyNote) calendlyNote.style.display=hideCalendly?'none':'block';
+
+  const glow=document.getElementById('glow');
+  if(scoreColor==='#e74c3c') glow.style.background='radial-gradient(ellipse,rgba(231,76,60,.18) 0%,transparent 70%)';
+  else if(scoreColor==='#e67e22') glow.style.background='radial-gradient(ellipse,rgba(230,126,34,.15) 0%,transparent 70%)';
+  else glow.style.background='radial-gradient(ellipse,rgba(45,80,22,.2) 0%,transparent 70%)';
+
+  const labelsMap={energie:'Énergie matin',fatigue:'Fatigue mentale',motivation:'Envie du lundi',pression:'Pression interne',plaisir:'Plaisir quotidien',deconnexion:'Déconnexion',sens:'Sens & direction',corps:'Signaux corps'};
+  const barresEl=document.getElementById('barres');
+  barresEl.innerHTML='';
+  questions.forEach(q=>{
+    const v=scores[q.key];
+    const dv=q.inverse?v:(10-v);
+    const bc=dv>=7?'#27ae60':dv>=4?'#e67e22':'#e74c3c';
+    const row=document.createElement('div');
+    row.className='barre-row';
+    row.innerHTML=`<span class="barre-label">${labelsMap[q.key]}</span><div class="barre-bg"><div class="barre-fill" style="background:${bc}" data-w="${dv*10}%"></div></div><span class="barre-val" style="color:${bc}">${v}</span>`;
+    barresEl.appendChild(row);
+  });
+
+  showScreen('resultat');
+
+  let c2=0;
+  const iv=setInterval(()=>{c2+=Math.ceil(total/18);if(c2>=total){c2=total;clearInterval(iv);}scoreEl.textContent=c2;},45);
+  setTimeout(()=>{document.querySelectorAll('.barre-fill').forEach(b=>{b.style.width=b.dataset.w;});},400);
+}
+
+function restart(){
+  current=0;scores={};
+  document.getElementById('glow').style.background='radial-gradient(ellipse,rgba(45,80,22,.18) 0%,transparent 70%)';
+  showScreen('intro');
+}
+</script>
+</body>
+</html>
